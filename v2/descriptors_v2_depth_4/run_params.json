@@ -1,0 +1,20 @@
+{
+  "params": {
+    "cutoff": 3.4,
+    "cation_species": [
+      "Ir",
+      "Ru"
+    ],
+    "n_surf_layers": 1,
+    "n_sub_layers": 1,
+    "vacuum_gap_threshold": 5.0,
+    "layer_gap_threshold": 0.5
+  },
+  "mc_dir": "Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs",
+  "n_cases": 30,
+  "n_rows": 21820,
+  "generated_at": "2026-08-31 18:59:25",
+  "module": "descriptors_v2",
+  "n_layer_rows": 295057,
+  "note": "descriptor 값만 담긴 표다. 평형 구간 선택/평균/플롯은 노트북에서 한다. x_layer는 layer_profile.csv(long)에 있고 per_frame.csv에는 ';'로 이은 문자열 칼럼으로도 들어 있다 - 값은 동일하다."
+}
