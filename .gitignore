@@ -1,0 +1,19 @@
+# 올리는 것만 명시하고 나머지는 기본 무시한다 (PDF·v1·WORKFLOW·PROGRESS.md 등이 새지 않도록)
+/*
+!/.gitignore
+!/README.md
+!/requirements.txt
+!/v2/
+
+.DS_Store
+__pycache__/
+*.pyc
+*.bak*
+*.extxyz
+
+v2/explanation/
+v2/spec/
+
+# descriptor 중간 산출물 (최대 370 MB) — run_params.json만 남긴다
+v2/descriptors_v2_*/*
+!v2/descriptors_v2_*/run_params.json
