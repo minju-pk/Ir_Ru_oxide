@@ -14,6 +14,8 @@ __pycache__/
 v2/explanation/
 v2/spec/
 
-# descriptor 중간 산출물 (최대 370 MB) — run_params.json만 남긴다
-v2/descriptors_v2_*/*
-!v2/descriptors_v2_*/run_params.json
+# descriptor 산출물 (최대 370 MB) — 최종본(domain_6)의 run_params.json만 남긴다
+v2/descriptors_v2_*/
+!v2/descriptors_v2_domain_6/
+v2/descriptors_v2_domain_6/*
+!v2/descriptors_v2_domain_6/run_params.json

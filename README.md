@@ -26,7 +26,7 @@ v2/
 ├── run_descriptors_v2.py    30케이스 배치 실행
 ├── measure_shells.py · measure_domain_graph.py   껍질 거리 · k=4 그래프 실측
 ├── verify_sro.py · verify_domain.py              검증
-├── descriptors_v2_*/run_params.json              산출물별 실행 설정 (CSV 본체는 미포함)
+├── descriptors_v2_domain_6/run_params.json      최종 산출물의 실행 설정 (CSV 본체는 미포함)
 └── plot/                    그림 · 그림 데이터 · 생성 스크립트
 ```
 
