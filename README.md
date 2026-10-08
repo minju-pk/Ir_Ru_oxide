@@ -37,12 +37,30 @@ MC 궤적(약 14 GB)은 올리지 않았습니다. 재실행하려면 다음 위
 
 중간 산출물 CSV(최대 370 MB)도 미포함 — `run_descriptors_v2.py`로 다시 만들 수 있습니다(약 200초).
 
-## 실행
+## 사용 방법
+
+### 1. 설치
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt     # Python 3.12에서 확인
+```
+
+### 2. MC 결과 전체를 한 번에 계산
+
+입력은 케이스마다 폴더 하나입니다.
+
+```
+Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs/
+└── ir_ru_sqs_x0p25_111_S0_Orich_dO+32_N_1040_normalz/   폴더명에서 조성·facet·O 조건을 읽음
+    ├── surface.xyz                                      초기 slab — 층 라벨 · 이웃 목록을 여기서 한 번 정함
+    └── run_*/
+        ├── accepted_states.xyz                          수락된 MC 프레임
+        └── results_every_step.json                      스텝 기록 — 프레임별 점유 스텝 구간
+```
+
+```bash
 cd v2
-python run_descriptors_v2.py        # descriptor 계산 → descriptors_v2_domain_6/
+python run_descriptors_v2.py        # descriptor 계산 → descriptors_v2_domain_6/ (약 200초)
 python verify_sro.py                # α 검증 6건
 python verify_domain.py             # domain 검증 8건
 python plot/plot_v2_report.py       # 그림
@@ -50,6 +68,33 @@ python plot/export_figure_data.py   # 그림 데이터 표
 ```
 
 출력 폴더에 결과가 이미 있으면 덮어쓰지 않고 멈춥니다.
+폴더명 형식이 다르면 그 케이스는 건너뜁니다(`run_descriptors_v2.py`의 `CASE_RE`).
+전제: 원소는 Ir/Ru, vacuum 축이 하나인 slab, 원자층 4개 이상(위·아래에 표면 + 차표면).
+
+### 3. 출력 파일 (`descriptors_v2_domain_6/`)
+
+| 파일 | 한 행 | 주요 칼럼 |
+|---|---|---|
+| `per_frame.csv` | 프레임 1개 | 깊이별 조성 `x_{TS,BS,TSS,BSS}` `S_surf_avg` `S_sub_avg` `A_tb` `G_star` · domain `D_{Ir,Ru}_{R}` `ncl_` `H_` `Pa_` `Pb_` `Pany_` `I_{R}` · 점유 스텝 `step_from` `step_to` |
+| `layer_profile.csv` | (프레임, 층) | `x` = 그 층의 Ir 비율 (`layer` 0 = 좌표가 가장 작은 층) |
+| `sro_long.csv` | (프레임, 껍질) | `quantity` = `alpha_in` / `alpha_in_region` / `alpha_out` · `m` · `shell_r`(Å) · `alpha` · `valid` · `in_spec` |
+| `shell_pairs.csv` | (케이스, 껍질) | 껍질 거리 · pair 수 (프레임 무관) |
+| `domain_layer.csv` | (프레임, 층, 원소) | `max_cluster` `n_cluster` `P_a` `P_b` |
+| `domain_graph.csv` | (케이스, 층) | k=4 그래프의 간선 수 · degree (프레임 무관) |
+
+`per_frame.csv`의 `C_lat_*` `D_dom_*` `S_depth` `G_layer` 등은 이전 정의(v1)와의 비교용이며 그림에는 쓰지 않습니다.
+
+**평균 낼 때**: MC에서 거부된 스텝 동안에는 직전 구조가 유지되므로 프레임을 같은 무게로 평균하면 안 됩니다.
+점유 스텝 수로 가중합니다.
+
+```python
+lo, hi = 601, 1100                                   # 평형 구간
+w = (np.minimum(pf.step_to, hi) - np.maximum(pf.step_from, lo) + 1).clip(lower=0)
+```
+
+**주의**: `alpha`는 한 원소로만 된 층에서 정의되지 않아 NaN입니다(`valid == False`) — 행을 지우지 않으므로
+`valid.mean()`이 유효 비율입니다. `sro_long.csv`는 370 MB라 `usecols`로 열을 골라 읽고,
+`facet`은 `dtype={'facet': str}`로 읽어야 `'111'` 비교가 됩니다.
 
 ## 검증 요약
 
