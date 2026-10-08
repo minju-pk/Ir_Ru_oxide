@@ -12,7 +12,7 @@ Ir–Ru 혼합 산화물 slab 30구조(Monte Carlo swap, 800 K)의 Ir/Ru 배열�
 
 ## 결과 — 그림과 그림 데이터
 
-- 그림: `v2/plot/figures_v2_report/` (17장, PNG·PDF)
+- 그림: `v2/plot/figures_v2_report/` (17장, PNG·PDF) — 항목별 폴더 `01_Depth_composition` · `02_SRO` · `03_Domain_morphology`
 - 그림에 찍힌 모든 점의 값: `v2/plot/figure_data_v2_report/`
   — 평균·SD와 함께 **valid_fraction**(값이 정의된 비율)과 **single_atom_share**
   (소수 원자 1개라 α=0·D=1·H=0으로 고정된 비율)를 함께 실었습니다. 열 설명은 그 폴더의 README.

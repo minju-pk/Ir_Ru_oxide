@@ -3,7 +3,7 @@
 v2 descriptor 그림 — 깊이별 조성 · 단거리 ordering · domain morphology.
 
 입력 : ../descriptors_v2_domain_6/{per_frame,layer_profile,sro_long}.csv
-출력 : figures_v2_report/*.png (300 dpi) + *.pdf
+출력 : figures_v2_report/<항목 폴더>/*.png (300 dpi) + *.pdf
 
   fig1a_layer_profile          x_layer 깊이 프로파일 (패널 = facet × x_Ir, 선 = O 조건)
   fig1b_depth_scalars          S_surf(avg) · S_sub(avg) · A_tb · |A_tb| · G*
@@ -33,6 +33,9 @@ import scienceplots  # noqa: F401  (style 등록용)
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "descriptors_v2_domain_6"
 OUT = HERE / "figures_v2_report"
+# 그림 이름 접두사 -> 항목 폴더
+SUBDIRS = (("fig1", "01_Depth_composition"), ("fig2", "02_SRO"),
+           ("fig3", "03_Domain_morphology"), ("figS3", "03_Domain_morphology"))
 
 WIN = (601, 1100)                 # 평형 구간 (MC 스텝)
 
@@ -119,8 +122,10 @@ def wstats(df, value, by):
 
 
 def save(fig, name):
-    fig.savefig(OUT / f"{name}.png")
-    fig.savefig(OUT / f"{name}.pdf")
+    out = OUT / next(d for p, d in SUBDIRS if name.startswith(p))
+    out.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out / f"{name}.png")
+    fig.savefig(out / f"{name}.pdf")
     plt.close(fig)
     print(f"  -> {name}.png / .pdf")
 
