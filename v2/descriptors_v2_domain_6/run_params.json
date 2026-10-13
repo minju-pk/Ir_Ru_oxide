@@ -13,7 +13,7 @@
   "mc_dir": "Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs",
   "n_cases": 30,
   "n_rows": 21820,
-  "generated_at": "2026-09-11 00:13:15",
+  "generated_at": "2026-10-13 20:39:21",
   "module": "descriptors_v2",
   "n_layer_rows": 295057,
   "sro_params": {
@@ -32,5 +32,5 @@
   },
   "n_domain_layer_rows": 590114,
   "n_domain_graph_rows": 399,
-  "note": "descriptor 값만 담긴 표다. 평형 구간 선택/평균/플롯은 노트북에서 한다. x_layer는 layer_profile.csv(long)에 있고 per_frame.csv에는 ';'로 이은 문자열 칼럼으로도 들어 있다 - 값은 동일하다. alpha_in/alpha_out은 sro_long.csv(long), 그 껍질 목록은 shell_pairs.csv에 있다. 스펙 문구 그대로의 값은 in_spec==True 필터. domain morphology의 region 수준(D/ncl/H/Pany/I/nedge)은 per_frame.csv의 칼럼이고, 층 수준은 domain_layer.csv(long), 그래프 자체는 domain_graph.csv에 있다."
+  "note": "descriptor 값만 담긴 표다. 평형 구간 선택/평균/플롯은 plot/ 스크립트가 한다. x_layer는 layer_profile.csv(long)에 있고 per_frame.csv에는 ';'로 이은 문자열 칼럼으로도 들어 있다 - 값은 동일하다. alpha_in/alpha_out은 sro_long.csv(long), 그 껍질 목록은 shell_pairs.csv에 있다. 스펙 문구 그대로의 값은 in_spec==True 필터. domain morphology의 region 수준(D/ncl/H/Pany/I/nedge)은 per_frame.csv의 칼럼이고, 층 수준은 domain_layer.csv(long), 그래프 자체는 domain_graph.csv에 있다."
 }

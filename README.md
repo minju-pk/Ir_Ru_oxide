@@ -64,12 +64,13 @@ python run_descriptors_v2.py        # descriptor 계산 → descriptors_v2_domai
 python verify_sro.py                # α 검증 6건
 python verify_domain.py             # domain 검증 8건
 python plot/plot_v2_report.py       # 그림
-python plot/export_figure_data.py   # 그림 데이터 표
+python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려면 plot/figure_data_v2_report/의 CSV 2개를 옮기거나 지운 뒤 실행
 ```
 
 출력 폴더에 결과가 이미 있으면 덮어쓰지 않고 멈춥니다.
 폴더명 형식이 다르면 그 케이스는 건너뜁니다(`run_descriptors_v2.py`의 `CASE_RE`).
 전제: 원소는 Ir/Ru, vacuum 축이 하나인 slab, 원자층 4개 이상(위·아래에 표면 + 차표면).
+`accepted_states.xyz`의 cation 순서가 `surface.xyz`와 같아야 합니다 — 원자 index를 site로 쓰며, 코드가 이를 검사하지 않습니다.
 
 ### 3. 출력 파일 (`descriptors_v2_domain_6/`)
 

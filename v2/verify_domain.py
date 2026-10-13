@@ -9,6 +9,7 @@ Domain morphology 구현 검증 (화면 출력만). 대표 케이스 = facet마�
   [5] 결측 규약       원소 없는 region → D·H = NA (다른 region으로 번지지 않음) · n_cluster = 1 → H = 0
   [6] v1 비교         cutoff 3.4 Å 그래프의 사슬·고립 원자가 k=4 그래프에서 사라지는가
   [7] 회귀            배치 산출물의 공통 칼럼이 이전 산출물과 같은가 (산출물이 없으면 SKIP)
+                      내부 회귀 확인용 — 기준값(descriptors_v2_sro_5/)이 공유본에 없어 공유본에서는 항상 SKIP
   [8] 손계산 대조     덩어리 크기 목록에 스펙 식을 직접 적용해 per_frame.csv와 비교.
                       P는 복제 셀이라는 다른 알고리즘으로 판정
 """
@@ -348,7 +349,7 @@ def check_7_regression():
         print(f"  SKIP: {OUTDIR.name}/ 에 아직 결과가 없다 (배치를 먼저 돌린다)")
         return None
     if not (PREV_OUTDIR / "per_frame.csv").exists():
-        print(f"  SKIP: 기준값 {PREV_OUTDIR.name}/ 이 없다")
+        print(f"  SKIP: 기준값 {PREV_OUTDIR.name}/ 이 없다 (내부 회귀 확인용 — 공유본에서는 정상)")
         return None
 
     ok = True

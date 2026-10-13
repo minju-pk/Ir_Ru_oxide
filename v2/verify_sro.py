@@ -28,7 +28,7 @@ from descriptors_v2.sro import (build_shell_pairs, compute_alpha_frames,  # noqa
                                 layer_region_map, SPEC_R_MAX, SPEC_DLAYER_MAX)
 
 MC_DIR = PROJECT_ROOT / "Ir_Ru_oxide" / "correct" / "MC_final_30cases_20260806" / "mc_runs"
-OUTDIR = HERE / "descriptors_v2_sro_5"   # 검증 [6]이 읽는 배치 산출물
+OUTDIR = HERE / "descriptors_v2_domain_6"   # 검증 [6]이 읽는 배치 산출물
 CATION = ("Ir", "Ru")
 TOL = 0.18
 SRO_PARAMS = dict(r_max_inplane=6.6, r_max_inter=6.0, tol=TOL, n_shell=2, dlayer_max=3)
@@ -59,7 +59,7 @@ def load_case(case_dir):
 
 
 def facet_of(name):
-    return name.split("_")[3]
+    return name.split("_")[4]
 
 
 CASES = sorted(d for d in MC_DIR.glob("ir_ru_sqs_*") if d.is_dir())
