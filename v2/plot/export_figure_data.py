@@ -2,7 +2,7 @@
 """
 figures_v2_report/ 의 그림 17장에 찍힌 점을 표 두 개로 내보낸다 (그림은 다시 그리지 않는다).
 
-입력 : ../descriptors_v2_domain_6/{per_frame,layer_profile,sro_long}.csv   (읽기만 한다)
+입력 : ../results/{per_frame,layer_profile,sro_long}.csv   (읽기만 한다)
 출력 : figure_data_v2_report/figure_data_scalar.csv   x축 = O 조건인 그림 (fig1b, fig2a, fig3/figS3)
        figure_data_v2_report/figure_data_depth.csv    x축 = 층 번호인 그림 (fig1a, fig2b, fig2c)
 
@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
-SRC = HERE.parent / "descriptors_v2_domain_6"
+SRC = HERE.parent / "results"
 OUT = HERE / "figure_data_v2_report"
 
 WIN = (601, 1100)

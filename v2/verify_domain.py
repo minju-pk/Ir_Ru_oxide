@@ -7,10 +7,7 @@ Domain morphology 구현 검증 (화면 출력만). 대표 케이스 = facet마�
   [3] 항등식          Σ_q p_q = 1 · 0 < D ≤ 1 · 0 ≤ H ≤ 1 · 층 합 = region 합 · n_cluster = 1 → D = 1
   [4] I_R 재계산      간선 목록에서 이종 비율을 직접 센다
   [5] 결측 규약       원소 없는 region → D·H = NA (다른 region으로 번지지 않음) · n_cluster = 1 → H = 0
-  [6] v1 비교         cutoff 3.4 Å 그래프의 사슬·고립 원자가 k=4 그래프에서 사라지는가
-  [7] 회귀            배치 산출물의 공통 칼럼이 이전 산출물과 같은가 (산출물이 없으면 SKIP)
-                      내부 회귀 확인용 — 기준값(descriptors_v2_sro_5/)이 공유본에 없어 공유본에서는 항상 SKIP
-  [8] 손계산 대조     덩어리 크기 목록에 스펙 식을 직접 적용해 per_frame.csv와 비교.
+  [6] 손계산 대조     덩어리 크기 목록에 스펙 식을 직접 적용해 per_frame.csv와 비교.
                       P는 복제 셀이라는 다른 알고리즘으로 판정
 """
 import sys
@@ -29,15 +26,12 @@ sys.path.insert(0, str(HERE))
 from descriptors_v2.regions import (compute_layer_id, find_vacuum_axis,      # noqa: E402
                                     get_regions)
 from descriptors_v2.sro import layer_region_map, REGION_ORDER                # noqa: E402
-from descriptors_v2.core import get_cation_pairs_within_cutoff, compute_ddom  # noqa: E402
 from descriptors_v2.domain import (build_domain_graph, compute_domain_frames,  # noqa: E402
                                    DEFAULT_K, DEFAULT_TIE_TOL, DEFAULT_R_CUT,
                                    ELEM_ORDER)
 
 MC_DIR = PROJECT_ROOT / "Ir_Ru_oxide" / "correct" / "MC_final_30cases_20260806" / "mc_runs"
-OUTDIR = HERE / "descriptors_v2_domain_6"      # 배치 산출물
-PREV_OUTDIR = HERE / "descriptors_v2_sro_5"    # 검증 [7]의 기준값
-V1_CUTOFF = 3.4
+OUTDIR = HERE / "results"      # 배치 산출물
 
 CASES = sorted(d for d in MC_DIR.glob("ir_ru_sqs_*") if d.is_dir())
 REP = {}          # facet -> 대표 케이스 (facet당 첫 번째)
@@ -54,8 +48,7 @@ def load_case(case_dir):
     layer_id = compute_layer_id(atoms, cat)
     positions = atoms.get_positions()[cat]
     graph = build_domain_graph(positions, atoms.cell, atoms.pbc, layer_id, axis)
-    regions5 = get_regions(atoms, cat, "slab", layer_id=layer_id,
-                           split_top_bottom=True, axis=axis)
+    regions5 = get_regions(atoms, layer_id, axis=axis)
     layer_region = layer_region_map(layer_id, regions5)
     return dict(atoms=atoms, cat=cat, axis=axis, layer_id=layer_id, positions=positions,
                 graph=graph, regions5=regions5, layer_region=layer_region,
@@ -299,83 +292,6 @@ def check_5_na():
 
 
 # ---------------------------------------------------------------- [6]
-def check_6_v1_pathology():
-    print("\n[6] v1 비교 — cutoff 3.4 A 그래프의 사슬·고립 원자가 k=4 로 없어지는가")
-    ok = True
-    for facet, case_dir in REP.items():
-        c = load_case(case_dir)
-        g, lr = c["graph"], c["layer_region"]
-        s = c["s0"]
-        symbols = np.where(s, "Ir", "Ru")
-
-        # v1: region 안 cutoff 3.4 Å 그래프
-        v1 = {}
-        for name in ("TS", "TSS"):
-            mask = c["regions5"][name]
-            pos_r = c["positions"][mask]
-            pairs = get_cation_pairs_within_cutoff(pos_r, c["atoms"].cell,
-                                                   c["atoms"].pbc, V1_CUTOFF)
-            v1[name] = (compute_ddom(symbols[mask], pairs)[0], len(pairs))
-
-        r = compute_domain_frames(g, s[None, :], lr)
-        ts, tss = REGION_ORDER.index("TS"), REGION_ORDER.index("TSS")
-        new_ts = (r["D"][0, ts, 0], r["D"][0, ts, 1])
-
-        if facet == "111":
-            # (111): cutoff 안 pair 0개 → 모든 원자 고립
-            path_ok = (v1["TS"][1] == 0 and v1["TSS"][1] == 0)
-            fixed_ok = int(g["node_deg"].min()) >= DEFAULT_K
-            print(f"  (111) v1 표면 pair {v1['TS'][1]}개 -> D_dom {v1['TS'][0]:.3f} "
-                  f"(병리 재현 {path_ok})   k=4 최소 degree {int(g['node_deg'].min())} "
-                  f"-> 고립 없음 {fixed_ok}   새 D(Ir,Ru) = "
-                  f"({new_ts[0]:.3f}, {new_ts[1]:.3f})")
-            ok &= path_ok and fixed_ok
-        else:
-            # (100)/(110): 면내 이웃 2개 → 1차원 사슬
-            deg_v1 = 2 * v1["TS"][1] / max(int(c["regions5"]["TS"].sum()), 1)
-            chain_ok = deg_v1 <= 2.01
-            print(f"  ({facet}) v1 표면 pair {v1['TS'][1]:4d}개 -> 원자당 {deg_v1:.2f} "
-                  f"(사슬 재현 {chain_ok})   k=4 degree "
-                  f"{int(g['node_deg'].min())}~{int(g['node_deg'].max())}   새 D(Ir,Ru) = "
-                  f"({new_ts[0]:.3f}, {new_ts[1]:.3f})")
-            ok &= chain_ok
-    return ok
-
-
-# ---------------------------------------------------------------- [7]
-def check_7_regression():
-    print("\n[7] 회귀 — 단계 2·3 산출물이 한 자리도 안 바뀌었는가")
-    if not (OUTDIR / "per_frame.csv").exists():
-        print(f"  SKIP: {OUTDIR.name}/ 에 아직 결과가 없다 (배치를 먼저 돌린다)")
-        return None
-    if not (PREV_OUTDIR / "per_frame.csv").exists():
-        print(f"  SKIP: 기준값 {PREV_OUTDIR.name}/ 이 없다 (내부 회귀 확인용 — 공유본에서는 정상)")
-        return None
-
-    ok = True
-    for fname, keys in (("per_frame.csv", ["case_id", "frame"]),
-                        ("sro_long.csv", None),
-                        ("shell_pairs.csv", None)):
-        old = pd.read_csv(PREV_OUTDIR / fname, float_precision="round_trip")
-        new = pd.read_csv(OUTDIR / fname, float_precision="round_trip")
-        common = [c for c in old.columns if c in new.columns]
-        if keys:
-            old = old.sort_values(keys).reset_index(drop=True)
-            new = new.sort_values(keys).reset_index(drop=True)
-        same_rows = len(old) == len(new)
-        equal = same_rows and old[common].equals(new[common])
-        added = [c for c in new.columns if c not in old.columns]
-        print(f"  {fname:16s} 행 {len(old)} vs {len(new)}  공통칼럼 {len(common)}개 일치 {equal}"
-              + (f"  (새 칼럼 {len(added)}개)" if added else ""))
-        if not equal and same_rows:
-            for col in common:
-                if not old[col].equals(new[col]):
-                    print(f"        <<< 불일치 칼럼: {col}")
-        ok &= equal
-    return ok
-
-
-# ---------------------------------------------------------------- [8]
 def _cluster_sizes(graph, s, layer, is_ir):
     """한 층에서 한 원소의 덩어리 크기 목록 (내림차순). 고립 원자도 크기 1로 센다."""
     nodes = np.where((graph["node_layer"] == layer) & (s == is_ir))[0]
@@ -420,9 +336,9 @@ def _percolation_replica(graph, s, layer, is_ir, reach=2):
     return (bool(p_a), bool(p_b))
 
 
-def check_8_handcheck(frame=0, regions=("TS", "bulk")):
+def check_6_handcheck(frame=0, regions=("TS", "bulk")):
     """층별 덩어리 크기 목록에 D · n_cluster · H · I_R · P 식을 직접 적용해 per_frame.csv와 비교한다."""
-    print("\n[8] 손계산 대조 — 덩어리 크기 목록에서 스펙 식을 직접 적용")
+    print("\n[6] 손계산 대조 — 덩어리 크기 목록에서 스펙 식을 직접 적용")
     if not (OUTDIR / "per_frame.csv").exists():
         print(f"  SKIP: {OUTDIR.name}/ 에 아직 결과가 없다 (배치를 먼저 돌린다)")
         return None
@@ -502,9 +418,7 @@ def main():
         ("[3] 항등식", check_3_identities()),
         ("[4] I_R 독립 재계산", check_4_interface_density()),
         ("[5] 결측 규약", check_5_na()),
-        ("[6] v1 병리 재현", check_6_v1_pathology()),
-        ("[7] 회귀", check_7_regression()),
-        ("[8] 손계산 대조", check_8_handcheck()),
+        ("[6] 손계산 대조", check_6_handcheck()),
     ]
     print("\n" + "=" * 70)
     for name, ok in results:

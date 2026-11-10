@@ -22,11 +22,11 @@ Ir–Ru 혼합 산화물 slab 30구조(Monte Carlo swap, 800 K)의 Ir/Ru 배열�
 
 ```
 v2/
-├── descriptors_v2/          계산 모듈 (regions · scalar · sro · domain)
+├── descriptors_v2/          계산 모듈 (regions · depth · sro · domain)
 ├── run_descriptors_v2.py    30케이스 배치 실행
 ├── measure_shells.py · measure_domain_graph.py   껍질 거리 · k=4 그래프 실측
 ├── verify_sro.py · verify_domain.py              검증
-├── descriptors_v2_domain_6/run_params.json      최종 산출물의 실행 설정 (CSV 본체는 미포함)
+├── results/run_params.json  산출물의 실행 설정 (CSV 본체는 미포함)
 └── plot/                    그림 · 그림 데이터 · 생성 스크립트
 ```
 
@@ -35,7 +35,7 @@ v2/
 MC 궤적(약 14 GB)은 올리지 않았습니다. 재실행하려면 다음 위치에 둡니다:
 `Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs/`
 
-중간 산출물 CSV(최대 370 MB)도 미포함 — `run_descriptors_v2.py`로 다시 만들 수 있습니다(약 200초).
+중간 산출물 CSV(최대 370 MB)도 미포함 — `run_descriptors_v2.py`로 다시 만들 수 있습니다(약 70초).
 
 ## 사용 방법
 
@@ -60,9 +60,9 @@ Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs/
 
 ```bash
 cd v2
-python run_descriptors_v2.py        # descriptor 계산 → descriptors_v2_domain_6/ (약 200초)
+python run_descriptors_v2.py        # descriptor 계산 → results/ (약 70초)
 python verify_sro.py                # α 검증 6건
-python verify_domain.py             # domain 검증 8건
+python verify_domain.py             # domain 검증 6건
 python plot/plot_v2_report.py       # 그림
 python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려면 plot/figure_data_v2_report/의 CSV 2개를 옮기거나 지운 뒤 실행
 ```
@@ -72,7 +72,7 @@ python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려�
 전제: 원소는 Ir/Ru, vacuum 축이 하나인 slab, 원자층 4개 이상(위·아래에 표면 + 차표면).
 `accepted_states.xyz`의 cation 순서가 `surface.xyz`와 같아야 합니다 — 원자 index를 site로 쓰며, 코드가 이를 검사하지 않습니다.
 
-### 3. 출력 파일 (`descriptors_v2_domain_6/`)
+### 3. 출력 파일 (`results/`)
 
 | 파일 | 한 행 | 주요 칼럼 |
 |---|---|---|
@@ -82,8 +82,6 @@ python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려�
 | `shell_pairs.csv` | (케이스, 껍질) | 껍질 거리 · pair 수 (프레임 무관) |
 | `domain_layer.csv` | (프레임, 층, 원소) | `max_cluster` `n_cluster` `P_a` `P_b` |
 | `domain_graph.csv` | (케이스, 층) | k=4 그래프의 간선 수 · degree (프레임 무관) |
-
-`per_frame.csv`의 `C_lat_*` `D_dom_*` `S_depth` `G_layer` 등은 이전 정의(v1)와의 비교용이며 그림에는 쓰지 않습니다.
 
 **평균 낼 때**: MC에서 거부된 스텝 동안에는 직전 구조가 유지되므로 프레임을 같은 무게로 평균하면 안 됩니다.
 점유 스텝 수로 가중합니다.

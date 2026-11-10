@@ -22,13 +22,12 @@ HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
-from descriptors_v2.core import compute_clat  # noqa: E402
 from descriptors_v2.regions import compute_layer_id, get_regions  # noqa: E402
 from descriptors_v2.sro import (build_shell_pairs, compute_alpha_frames,  # noqa: E402
                                 layer_region_map, SPEC_R_MAX, SPEC_DLAYER_MAX)
 
 MC_DIR = PROJECT_ROOT / "Ir_Ru_oxide" / "correct" / "MC_final_30cases_20260806" / "mc_runs"
-OUTDIR = HERE / "descriptors_v2_domain_6"   # 검증 [6]이 읽는 배치 산출물
+OUTDIR = HERE / "results"   # 검증 [6]이 읽는 배치 산출물
 CATION = ("Ir", "Ru")
 TOL = 0.18
 SRO_PARAMS = dict(r_max_inplane=6.6, r_max_inter=6.0, tol=TOL, n_shell=2, dlayer_max=3)
@@ -54,7 +53,7 @@ def load_case(case_dir):
     layer_id = compute_layer_id(atoms, cat)
     shells = build_shell_pairs(atoms.get_positions()[cat], atoms.cell, atoms.pbc,
                                layer_id, **SRO_PARAMS)
-    regions5 = get_regions(atoms, cat, 'slab', layer_id=layer_id, split_top_bottom=True)
+    regions5 = get_regions(atoms, layer_id)
     return atoms, cat, symbols[cat], layer_id, shells, layer_region_map(layer_id, regions5)
 
 
@@ -179,6 +178,16 @@ def check_2_superset_contains_spec():
 
 
 # ------------------------------------------------------------- [3] C_lat 항등식
+def clat_v1(symbols, pairs):
+    """v1 C_lat (개념서 식 24–26): 무작위 기준이 복원 추출 x² + (1 − x)². [3]의 대조용."""
+    if len(pairs) == 0:
+        return np.nan
+    f_same = np.mean(symbols[pairs[:, 0]] == symbols[pairs[:, 1]])
+    x = np.mean(symbols == "Ir")
+    f_rand = x**2 + (1 - x)**2
+    return (f_same - f_rand) / (1 - f_rand) if f_rand < 1 else np.nan
+
+
 def check_3_clat_identity():
     """같은 pair 집합에서 (1 − α_in) == (1 − C_lat)(N − 1)/N."""
     worst = 0.0
@@ -196,7 +205,7 @@ def check_3_clat_identity():
             p0, p1 = shells['pair_start'][e], shells['pair_start'][e + 1]
             pairs = np.array([[local[i], local[j]]
                               for i, j in zip(shells['pair_i'][p0:p1], shells['pair_j'][p0:p1])])
-            c_lat = compute_clat(csym[mask], pairs)
+            c_lat = clat_v1(csym[mask], pairs)
             n_l = int(mask.sum())
             if not np.isfinite(c_lat) or not np.isfinite(alpha[e]):
                 continue

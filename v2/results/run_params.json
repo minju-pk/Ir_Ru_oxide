@@ -1,6 +1,5 @@
 {
   "params": {
-    "cutoff": 3.4,
     "cation_species": [
       "Ir",
       "Ru"
@@ -13,7 +12,7 @@
   "mc_dir": "Ir_Ru_oxide/correct/MC_final_30cases_20260806/mc_runs",
   "n_cases": 30,
   "n_rows": 21820,
-  "generated_at": "2026-10-13 20:39:21",
+  "generated_at": "2026-11-06 18:13:58",
   "module": "descriptors_v2",
   "n_layer_rows": 295057,
   "sro_params": {

@@ -2,7 +2,7 @@
 """
 v2 descriptor 그림 — 깊이별 조성 · 단거리 ordering · domain morphology.
 
-입력 : ../descriptors_v2_domain_6/{per_frame,layer_profile,sro_long}.csv
+입력 : ../results/{per_frame,layer_profile,sro_long}.csv
 출력 : figures_v2_report/<항목 폴더>/*.png (300 dpi) + *.pdf
 
   fig1a_layer_profile          x_layer 깊이 프로파일 (패널 = facet × x_Ir, 선 = O 조건)
@@ -31,7 +31,7 @@ from matplotlib.lines import Line2D
 import scienceplots  # noqa: F401  (style 등록용)
 
 HERE = Path(__file__).resolve().parent
-SRC = HERE.parent / "descriptors_v2_domain_6"
+SRC = HERE.parent / "results"
 OUT = HERE / "figures_v2_report"
 # 그림 이름 접두사 -> 항목 폴더
 SUBDIRS = (("fig1", "01_Depth_composition"), ("fig2", "02_SRO"),

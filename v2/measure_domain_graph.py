@@ -4,8 +4,7 @@
 
   [1] 4번째·5번째 이웃 거리 — 동률이면 "가장 가까운 4개"가 유일하지 않다
   [2] 대칭화 후 degree와 층당 간선 수 (동률 포함 vs strict)
-  [3] 단일 cutoff 3.4 Å 그래프의 면내 이웃 수 (v1 비교)
-  [4] 최소이미지 검증 — domain.py(ase.neighborlist) vs 면내 5×5 이미지 전수 탐색
+  [3] 최소이미지 검증 — domain.py(ase.neighborlist) vs 면내 5×5 이미지 전수 탐색
 """
 import sys
 from pathlib import Path
@@ -23,7 +22,6 @@ from descriptors_v2.domain import (build_domain_graph, inplane_neighbor_entries,
 
 MC_DIR = PROJECT_ROOT / "Ir_Ru_oxide" / "correct" / "MC_final_30cases_20260806" / "mc_runs"
 
-V1_CUTOFF = 3.4      # v1 C_lat/D_dom의 단일 cutoff (Å)
 TIE_ATOL = 1e-6      # 거리 동률 판정
 
 
@@ -100,7 +98,7 @@ def main():
         facet = case_dir.name.split("_")[4]
         rec = per_facet.setdefault(facet, dict(
             cases=0, layers=0, d4=[], d5=[], gap=[], n_tie=[], n_nodes=[],
-            edges=[], edges_strict=[], deg_min=[], deg_max=[], deg_mean=[], n34=[]))
+            edges=[], edges_strict=[], deg_min=[], deg_max=[], deg_mean=[]))
         rec["cases"] += 1
 
         for layer in range(graph["n_layers"]):
@@ -128,7 +126,6 @@ def main():
             for a, b, dist in zip(ei[sel], ej[sel], ed[sel]):
                 la, lb = local[a], local[b]
                 d[la, lb] = min(d[la, lb], dist)
-            rec["n34"].append(float((d <= V1_CUTOFF).sum(axis=1).mean()))
 
             # 5×5 이미지 전수 탐색과 대조
             r_probe = float(np.nanmax(graph["layer_d5"]))
@@ -172,17 +169,7 @@ def main():
         print(f"({facet})  {deg_span:>14s} {e:14.1f} {es:16.1f} {drop:>13s}")
 
     print()
-    print(f"[3] v1이 무엇을 놓쳤는가 — 면내 컷오프 {V1_CUTOFF} A 로 잡히던 이웃 수")
-    print(f"{'facet':7s} {'v1 이웃/원자':>13s} {'k=4 degree':>12s}  증상")
-    for facet in sorted(per_facet):
-        r = per_facet[facet]
-        n34 = float(np.mean(r["n34"]))
-        sym = ("이웃 0개 → 모든 원자 고립, D_dom = 1 고정" if n34 < 0.5 else
-               "이웃 2개 → 1차원 사슬" if n34 < 2.5 else "")
-        print(f"({facet})  {n34:13.2f} {float(np.mean(r['deg_mean'])):12.2f}  {sym}")
-
-    print()
-    print("[4] 최소이미지 검증 — descriptors_v2/domain.py (ase.neighborlist) vs 5x5 이미지 전수")
+    print("[3] 최소이미지 검증 — descriptors_v2/domain.py (ase.neighborlist) vs 5x5 이미지 전수")
     print(f"  좌표 불일치 층: {mismatch_total}개  "
           f"{'<<< 확인 필요' if mismatch_total else '→ PASS'}")
     print(f"  같은 상대의 이미지가 2개 이상 이웃 반경에 들어온 쌍: {multi_total}개  "
