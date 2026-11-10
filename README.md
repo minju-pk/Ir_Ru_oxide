@@ -1,7 +1,7 @@
 # Ir–Ru 혼합 산화물 slab — 원자 배열 descriptor (spec v2)
 
 Ir–Ru 혼합 산화물 slab 30구조(Monte Carlo swap, 800 K)의 Ir/Ru 배열을
-협업 연구실의 descriptor 정의(2026-08-27, spec v2)에 따라 정량화한 코드와 결과입니다.
+descriptor 정의(2026-08-27, spec v2)에 따라 정량화한 코드와 결과입니다.
 
 | 범주 | descriptor | 상태 |
 |---|---|---|
@@ -18,6 +18,29 @@ Ir–Ru 혼합 산화물 slab 30구조(Monte Carlo swap, 800 K)의 Ir/Ru 배열�
   (소수 원자 1개라 α=0·D=1·H=0으로 고정된 비율)를 함께 실었습니다. 열 설명은 그 폴더의 README.
 - 집계: MC 601–1100 스텝, 점유 스텝 가중 평균. 오차막대 = 스텝 간 SD(평균의 오차 아님)
 
+## 피드백 반영 (2026-11-03 미팅)
+
+2026-10-06 미팅에서 받은 피드백 3가지를 반영했습니다. 다시 계산하지 않고 `results/`의 값을 다시 집계했습니다.
+
+| 피드백 | 반영 | 위치 |
+|---|---|---|
+| descriptor가 너무 많다 | 대표 descriptor 8개를 정함 (아래) | — |
+| 601–1100 평균이 구조를 대표하지 않을 수 있다 | 대표 8개 + energy의 100 step 블록 평균 시계열, 601–1100 앞뒤 절반 비교 | `v2/feedback_20261006/02_timeseries/` |
+| 그림 하나에 여러 정보 (구조 하나 = 점 하나) | 대표값 2D 지도 | `v2/feedback_20261006/03_summary_map/` |
+
+**대표 descriptor 8개**: S_surf(avg) · S_sub(avg) · A_tb · G* · α_in (m = 1, 2) × 표면 · 내부.
+나머지(x_region · x_layer · α_out · domain morphology)는 구조를 설명하는 보조지표입니다.
+α_in 표면은 TS · BS 층을 한 region으로 묶어 1 − Σ|E|f_obs / Σ|E|f_0 로 계산합니다(두 표면 α의 단순 평균이 아님).
+
+**오차막대는 그림마다 뜻이 다릅니다**
+
+| 그림 | 오차막대 | 뜻 |
+|---|---|---|
+| `v2/plot/figures_v2_report/` | 스텝 간 SD | MC 동안 값이 얼마나 출렁였나 |
+| `v2/feedback_20261006/03_summary_map/` | block SE | 601–1100 평균을 얼마나 믿을 수 있나 (하한) |
+
+실행 방법은 아래 "사용 방법", 파일 설명 · 그림 읽는 법은 각 폴더의 README에 있습니다.
+
 ## 구조
 
 ```
@@ -27,7 +50,8 @@ v2/
 ├── measure_shells.py · measure_domain_graph.py   껍질 거리 · k=4 그래프 실측
 ├── verify_sro.py · verify_domain.py              검증
 ├── results/run_params.json  산출물의 실행 설정 (CSV 본체는 미포함)
-└── plot/                    그림 · 그림 데이터 · 생성 스크립트
+├── plot/                    그림 · 그림 데이터 · 생성 스크립트
+└── feedback_20261006/       2026-10-06 미팅 피드백 반영 (02_timeseries · 03_summary_map)
 ```
 
 ## 데이터 (저장소 미포함)
@@ -65,6 +89,19 @@ python verify_sro.py                # α 검증 6건
 python verify_domain.py             # domain 검증 6건
 python plot/plot_v2_report.py       # 그림
 python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려면 plot/figure_data_v2_report/의 CSV 2개를 옮기거나 지운 뒤 실행
+```
+
+피드백 반영 결과 (위에서 만든 `results/`를 씁니다):
+
+```bash
+cd v2/feedback_20261006/02_timeseries
+python build_timeseries.py          # 블록 평균 · 앞뒤 절반 비교 → CSV 3개
+python build_block_se.py            # 601–1100 평균의 오차 → block_se.csv
+python plot_timeseries.py           # 시간 변화 그림 (facet별 3패널)
+python plot_F1_grid.py              # 시간 변화 그림 (3×3 판)
+cd ../03_summary_map
+python plot_summary_pairmap.py      # 요약 지도 C
+python plot_summary_map.py          # 요약 지도 B1
 ```
 
 출력 폴더에 결과가 이미 있으면 덮어쓰지 않고 멈춥니다.
@@ -112,5 +149,5 @@ w = (np.minimum(pf.step_to, hi) - np.maximum(pf.step_from, lo) + 1).clip(lower=0
 
 ## 참고
 
-- descriptor 정의의 출처는 협업 연구실의 정리 문서(2026-08-27)이며 저장소에 포함하지 않았습니다.
+- descriptor 정의 문서(2026-08-27)는 저장소에 포함하지 않았습니다.
 - 환경: Python 3.12.13 · numpy 2.5.1 · pandas 3.0.5 · ase 3.29.0 · scipy 1.18.0 · matplotlib 3.11.1 · SciencePlots 2.2.2
