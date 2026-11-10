@@ -21,6 +21,9 @@ v2/results/*
 
 # feedback: 이번 Release에 올리지 않는 것 (서버에만 둠)
 v2/feedback_20261006/01_representative/
+v2/feedback_20261006/02_timeseries/build_halves.py
+v2/feedback_20261006/02_timeseries/halves.csv
+v2/feedback_20261006/02_timeseries/halves_by_series.csv
 v2/feedback_20261006/02_timeseries/fig_F2_halves.png
 v2/feedback_20261006/02_timeseries/plot_F2_halves.py
 v2/feedback_20261006/03_summary_map/fig_B1_tail.png

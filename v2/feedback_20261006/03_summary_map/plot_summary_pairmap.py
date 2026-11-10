@@ -5,7 +5,7 @@
 점 = 601–1100 평균, 오차막대 = block_se. α 두 열은 같은 축 범위.
 
 입력 : ../02_timeseries/block_se.csv
-출력 : fig_C_pairmap.png · .pdf. 둘 다 있으면 멈춘다.
+출력 : figures/fig_C_pairmap.png · .pdf. 둘 다 있으면 멈춘다.
 """
 from pathlib import Path
 
@@ -18,7 +18,7 @@ import scienceplots  # noqa: F401  (style 등록용)
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "02_timeseries"
-OUT = HERE / "fig_C_pairmap.png"
+OUT = HERE / "figures" / "fig_C_pairmap.png"
 FACETS = ("100", "110", "111")
 O_ORDER = ("Opoor", "stoich", "Orich")
 O_LAB = {"Opoor": "O-poor", "stoich": "stoich", "Orich": "O-rich"}
@@ -93,6 +93,7 @@ handles = [Line2D([], [], color=O_COL[o], marker="o", ls="", ms=6, label=O_LAB[o
            Line2D([], [], color=INK2, marker="+", ms=9, mew=0.9, ls="", label="error bar = block SE")]
 fig.legend(handles=handles, loc="outside lower center", ncol=3)
 fig.suptitle("One point per structure = mean over MC step 601–1100", fontsize=11, color=INK2)
+OUT.parent.mkdir(exist_ok=True)
 fig.savefig(OUT)
 fig.savefig(OUT.with_suffix(".pdf"))
 print("saved", OUT.name, OUT.with_suffix(".pdf").name)

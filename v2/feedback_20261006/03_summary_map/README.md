@@ -16,8 +16,8 @@ python plot_summary_map.py       # 그림 B1
 
 | 파일 | 내용 |
 |---|---|
-| `fig_C_pairmap` | 행 = facet, 열 = ① S_surf(avg) × S_sub(avg) ② α_in 표면 m = 1 × m = 2 ③ α_in 내부 m = 1 × m = 2 |
-| `fig_B1` | S_surf(avg) × S_sub(avg) + 꼬리 (MC 101–200 평균 → 601–1100 평균) |
+| `figures/fig_C_pairmap` | 행 = facet, 열 = ① S_surf(avg) × S_sub(avg) ② α_in 표면 m = 1 × m = 2 ③ α_in 내부 m = 1 × m = 2 |
+| `figures/fig_B1` | S_surf(avg) × S_sub(avg) + 꼬리 (MC 101–200 평균 → 601–1100 평균) |
 
 ## 그림 읽는 법
 

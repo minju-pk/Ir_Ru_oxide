@@ -3,7 +3,7 @@
 그림 F1 3×3 판 — plot_timeseries.py와 같은 데이터를 행 = facet, 열 = O 조건으로 배치.
 
 입력 : block_means.csv
-출력 : fig_F1grid_<계열>.png · .pdf  9개씩. PNG · PDF가 모두 있으면 건너뛴다.
+출력 : figures/F1_grid/fig_F1grid_<계열>.png · .pdf  9개씩. PNG · PDF가 모두 있으면 건너뛴다.
 energy · YLIM은 plot_timeseries.py와 같다.
 """
 from pathlib import Path
@@ -30,7 +30,7 @@ LOW_VALID = 0.5
 YLIM = {"a_in_bulk_m1": (-0.352, 0.556), "a_in_bulk_m2": (-0.482, 0.509)}
 ADAPTIVE_END, WIN_START = 100, 601
 
-outs = [HERE / f"fig_F1grid_{s}.png" for s in SERIES]
+outs = [HERE / "figures" / "F1_grid" / f"fig_F1grid_{s}.png" for s in SERIES]
 
 plt.style.use(["science", "notebook"])
 plt.rcParams.update({
@@ -114,6 +114,7 @@ for s, out in zip(SERIES, outs):
     legend = legend_for((d.valid_fraction < LOW_VALID).any())
     fig.legend(handles=legend, loc="upper center", bbox_to_anchor=(0.5, 0.0), ncol=-(-len(legend) // 3))
     fig.tight_layout()
+    out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out)
     fig.savefig(out.with_suffix(".pdf"))
     plt.close(fig)

@@ -3,7 +3,7 @@
 그림 F1 — 대표 descriptor 8개 + energy의 100 step 블록 평균 (facet별 3패널).
 
 입력 : block_means.csv
-출력 : fig_F1_<계열>.png · .pdf  9개씩. PNG · PDF가 모두 있으면 건너뛴다.
+출력 : figures/F1_facet/fig_F1_<계열>.png · .pdf  9개씩. PNG · PDF가 모두 있으면 건너뛴다.
 energy = 구조마다 마지막 블록 평균을 뺀 값(meV/atom). α 내부는 같은 m의 α 표면과 같은 y축(YLIM).
 """
 from pathlib import Path
@@ -18,6 +18,7 @@ import scienceplots  # noqa: F401  (style 등록용)
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "block_means.csv"
+OUTD = HERE / "figures" / "F1_facet"
 
 SERIES = ["S_surf_avg", "S_sub_avg", "A_tb", "G_star",
           *[f"a_in_{r}_m{m}" for r in ("surf", "bulk") for m in (1, 2)], "energy_meV_atom"]
@@ -80,7 +81,7 @@ def f1_legend(has_low):
 
 
 for s in SERIES:
-    if (HERE / f"fig_F1_{s}.png").exists() and (HERE / f"fig_F1_{s}.pdf").exists():
+    if (OUTD / f"fig_F1_{s}.png").exists() and (OUTD / f"fig_F1_{s}.pdf").exists():
         print(f"exists, skip fig_F1_{s}")
         continue
     d = bm[bm.series == s]
@@ -115,7 +116,8 @@ for s in SERIES:
     fig.suptitle(label(s), x=0.125, ha="left", y=1.02, fontsize=12.5)
     legend = f1_legend((d.valid_fraction < LOW_VALID).any())
     fig.legend(handles=legend, loc="upper center", bbox_to_anchor=(0.5, -0.02), ncol=-(-len(legend) // 3))
-    fig.savefig(HERE / f"fig_F1_{s}.png")
-    fig.savefig(HERE / f"fig_F1_{s}.pdf")
+    OUTD.mkdir(parents=True, exist_ok=True)
+    fig.savefig(OUTD / f"fig_F1_{s}.png")
+    fig.savefig(OUTD / f"fig_F1_{s}.pdf")
     plt.close(fig)
     print(f"fig_F1_{s}.png")

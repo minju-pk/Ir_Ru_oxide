@@ -4,7 +4,7 @@
 점 = 601–1100 평균, 오차막대 = block_se, 꼬리 = 101–200 블록 평균에서 출발.
 
 입력 : ../02_timeseries/block_se.csv · block_means.csv
-출력 : fig_B1.png · .pdf. 둘 다 있으면 멈춘다.
+출력 : figures/fig_B1.png · .pdf. 둘 다 있으면 멈춘다.
 """
 from pathlib import Path
 
@@ -26,7 +26,7 @@ INK2, GRID = "#52514e", "#e4e3df"
 TAIL_BLOCK = 1   # 101–200
 XS, X_LAB = "S_surf_avg", r"$S_\mathrm{surf}$ (avg)"
 YS, Y_LAB = "S_sub_avg", r"$S_\mathrm{sub}$ (avg)"
-OUT = HERE / "fig_B1.png"
+OUT = HERE / "figures" / "fig_B1.png"
 
 if OUT.exists() and OUT.with_suffix(".pdf").exists():
     raise SystemExit("그림이 이미 있다 — 덮어쓰지 않는다")
@@ -81,6 +81,7 @@ handles.append(Line2D([], [], color=INK2, lw=0.9, marker="o", ms=2.5, markevery=
                       label="tail: from MC 101–200 mean"))
 fig.legend(handles=handles, loc="outside lower center", ncol=3)
 fig.suptitle("One point per structure = mean over MC step 601–1100", fontsize=10, color=INK2)
+OUT.parent.mkdir(exist_ok=True)
 fig.savefig(OUT)
 fig.savefig(OUT.with_suffix(".pdf"))
 plt.close(fig)

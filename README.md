@@ -25,7 +25,7 @@ descriptor 정의(2026-08-27, spec v2)에 따라 정량화한 코드와 결과�
 | 피드백 | 반영 | 위치 |
 |---|---|---|
 | descriptor가 너무 많다 | 대표 descriptor 8개를 정함 (아래) | — |
-| 601–1100 평균이 구조를 대표하지 않을 수 있다 | 대표 8개 + energy의 100 step 블록 평균 시계열, 601–1100 앞뒤 절반 비교 | `v2/feedback_20261006/02_timeseries/` |
+| 한 구조가 시간에 따라 어떻게 달라지는지 보일 것 (601–1100 평균이 구조를 대표하지 않을 수 있다) | 대표 8개 + energy의 MC step에 따른 변화 (100 step 블록 평균) | `v2/feedback_20261006/02_timeseries/` |
 | 그림 하나에 여러 정보 (구조 하나 = 점 하나) | 대표값 2D 지도 | `v2/feedback_20261006/03_summary_map/` |
 
 **대표 descriptor 8개**: S_surf(avg) · S_sub(avg) · A_tb · G* · α_in (m = 1, 2) × 표면 · 내부.
@@ -95,8 +95,7 @@ python plot/export_figure_data.py   # 그림 데이터 표 — 다시 만들려�
 
 ```bash
 cd v2/feedback_20261006/02_timeseries
-python build_timeseries.py          # 블록 평균 · 앞뒤 절반 비교 → CSV 3개
-python build_block_se.py            # 601–1100 평균의 오차 → block_se.csv
+python build_timeseries.py          # 블록 평균 · 601–1100 평균의 오차 → block_means.csv · block_se.csv
 python plot_timeseries.py           # 시간 변화 그림 (facet별 3패널)
 python plot_F1_grid.py              # 시간 변화 그림 (3×3 판)
 cd ../03_summary_map
