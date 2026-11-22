@@ -39,8 +39,10 @@ def top_side_is_max_layer(atoms, axis):
 
 
 def layer_coordinate(atoms, indices, axis):
-    """층 감지용 1차원 좌표(Å) = fractional 좌표 × 셀 길이. 슬랩이 셀 경계에 걸치면 vacuum이 경계에 오게 옮긴다."""
-    length = atoms.cell.lengths()[axis]
+    """층 감지용 1차원 좌표(Å) = 표면 법선 방향 높이. 슬랩이 셀 경계에 걸치면 vacuum이 경계에 오게 옮긴다."""
+    cell = np.asarray(atoms.cell)
+    normal = np.cross(cell[(axis + 1) % 3], cell[(axis + 2) % 3])
+    length = abs(np.dot(cell[axis], normal)) / np.linalg.norm(normal)   # 셀의 법선 방향 높이
     coord = atoms.get_scaled_positions(wrap=True)[indices, axis] * length
     if len(coord) < 2:
         return coord
