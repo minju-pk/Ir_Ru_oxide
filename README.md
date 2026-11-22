@@ -8,7 +8,7 @@ descriptor 정의(2026-08-27, spec v2)에 따라 정량화한 코드와 결과�
 | 깊이별 조성 | x_region(TS/BS/TSS/BSS/bulk) · x_layer · S_surf(avg) · S_sub(avg) · A_tb · G* | 완료 |
 | 단거리 ordering | α_in(region × shell) · α_out(layer-pair × shell) | 완료 |
 | Domain morphology | D_Ir · D_Ru · n_cluster · H · I_R · P (k=4 면내 그래프) | 완료 |
-| 국소 기하 | structure-level SOAP (relaxation 전/후) | 예정 |
+| 국소 기하 | structure-level SOAP (relaxation 전/후) | 보류 |
 
 ## 결과 — 그림과 그림 데이터
 

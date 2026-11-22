@@ -10,9 +10,8 @@ Domain morphology — D_Ir/D_Ru · n_cluster · H · I_R · P (스펙 <Domain mo
 
 그래프: 층별 면내 대칭화 k=4 최근접 그래프, 초기 구조에서 한 번 만들어 고정.
 - 대칭화는 OR (i의 k위 안에 j, 또는 j의 k위 안에 i).
-- k번째 이웃과 같은 거리(tie_tol 이내)의 이웃은 모두 포함한다. (110)은 4번째 이웃이 4중 동률이라
-  이웃 6개가 되고, (100)/(111)은 4개다. tie_tol = 0.0이면 strict k-최근접.
-- percolation 방향은 면내 격자벡터 a, b 기준이다 ((111)은 면내 격자가 비스듬하다).
+- k번째 이웃 거리 + tie_tol 이내의 이웃은 모두 포함한다 (tie_tol = 0.0이면 strict k-최근접).
+- percolation 방향 = 면내 격자벡터 a, b.
 """
 import numpy as np
 from ase import Atoms
